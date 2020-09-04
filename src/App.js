@@ -1,25 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-
+import Callapi from './Components/Login';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import FormData from './Components/formData';
 function App() {
   return (
+    <Router>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <Switch>
+        <Route exact path='/form' component={FormData}></Route>
+        <Route exact path="/">
+        <Callapi />
+        </Route>
+      </Switch>
     </div>
+  </Router>
   );
 }
 
