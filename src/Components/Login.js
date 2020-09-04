@@ -99,10 +99,10 @@ export default function LogIn() {
         localStorage.setItem('Token',res.data.result.accessToken)
         console.log(res.data, "$$$$$$$$$$$44")
         if(res.data.success === true){
-          window.location.href = "/form";
+          window.location.href = "/category";
         }
         else{
-          window.location.href = "/home";
+          window.location.href = "/";
         }
       
       })
