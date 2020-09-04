@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Container, Grid ,Card} from '@material-ui/core';
+import { Container, Grid, Card } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -42,9 +42,17 @@ class Categories extends Component {
       categoryId: '',
       subCategoryId: '',
       topicId: '',
-      startDate:'',
-      endDate:'',
-      open:false,
+      startDate: '',
+      endDate: '',
+      open: false,
+
+      errors: {
+        listOfCategoires: [],
+        subCategories: [],
+        topies: [],
+        name: '',
+        imageUrl: '',
+      },
 
     }
   }
@@ -82,7 +90,7 @@ class Categories extends Component {
     })
   }
 
-  listOfCategoiresIdHandler(event, value){
+  listOfCategoiresIdHandler(event, value) {
     const categoryId = parseInt(value.id)
     this.setState({
       categoryId: categoryId
@@ -90,7 +98,7 @@ class Categories extends Component {
 
   }
 
-  subCategoriesIdIdHandler (event, newValue) {
+  subCategoriesIdIdHandler(event, newValue) {
     console.log(newValue, "Rvakuetrw")
     const subCategoryId = parseInt(newValue.id)
     this.setState({
@@ -98,7 +106,7 @@ class Categories extends Component {
     })
 
   }
-  topicesIdHandler(e, newValue){
+  topicesIdHandler(e, newValue) {
     if (newValue) {
       const topicId = parseInt(newValue.id)
       this.setState({
@@ -106,22 +114,41 @@ class Categories extends Component {
       })
     }
   }
-  handleChange(e){
+  handleChange(e) {
     console.log(e.target.value)
-
     const { name, value } = e.target;
-    this.setState({[name]: value});
- }
- handleSubmit(e) {
-  const token = localStorage.getItem('Token');
-  e.preventDefault()
-    
-  const { name, imageUrl, categoryId, subCategoryId, topicId,startDate,endDate } = this.state;
-  Axios.post('http://18.220.240.163:8080/rest/admin/matches',
-   { name, imageUrl, categoryId, subCategoryId, topicId,startDate,endDate },{ 
-    headers: {
-    'Authorization': `Bearer ${token}`
-  }})
+    const newErros = { ...this.state.errors };
+
+
+    switch (name) {
+      case "name":
+        newErros.name =
+          value.length > 5 ? "" : "Full Name must be 5 characters long!";
+        break;
+      case "listOfCategoires":
+        newErros.listOfCategoires = value.length > 5 ? "" : "category is not valid!";
+        break;
+      case "subCategories":
+        newErros.subCategories =
+          value.length > 5 ? "" : "subcategory must be 5 characters long!";
+        break;
+      default:
+        break;
+    }
+
+    this.setState({ errors: newErros, [name]: value });
+  }
+  handleSubmit(e) {
+    const token = localStorage.getItem('Token');
+    e.preventDefault()
+
+    const { name, imageUrl, categoryId, subCategoryId, topicId, startDate, endDate } = this.state;
+    Axios.post('http://18.220.240.163:8080/rest/admin/matches',
+      { name, imageUrl, categoryId, subCategoryId, topicId, startDate, endDate }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => {
         console.log(res, "submitdata")
 
@@ -132,156 +159,164 @@ class Categories extends Component {
         //   window.location.href = "/category";
         // }
       })
-      
-      
+
+
 
 
   }
-  
- handleClickOpen = () => {
-    this.setState({open:true});
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
   };
 
   handleClose = () => {
-    this.setState({open:false});
+    this.setState({ open: false });
     window.location.reload();
   };
 
   render() {
     // const { sDate } = this.state;
     // console.log(this.state, "------------------------")
+    const isEnabled= this.state.name.length > 5;
     const { classes } = this.props;
-    return <>
-      <Container component="main" maxWidth="md" style={{padding:'40px'}}>
-      <Card className={classes.root} style={{paddingLeft:"25%", paddingRight:'25%', paddingBottom:"10%"}}>
-        <Typography style={{ fontSize: 16, fontWeight: 'bold', marginTop: '4%' , textAlign:'center'}}>
-          <h3>Categories</h3>
-        </Typography>
-
-        <form className={classes.form} noValidate onSubmit={this.handleSubmit.bind(this)}>
-
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="name"
-            label="Name"
-            name="name"
-            autoComplete="name"
-            autoFocus
-            value={this.state.name}
-            onChange={(e) => this.handleChange(e)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="imageUrl"
-            label="ImageUrl"
-            type="imageUrl"
-            id="imageUrl"
-            autoComplete="current-password"
-            value={this.state.imageUrl}
-            onChange={(e) => this.handleChange(e)}
 
 
-          />
 
-          <Autocomplete
-            id="disable-portal"
-
-            onChange={this.listOfCategoiresIdHandler.bind(this)}
-            options={this.state.listOfCategoires}
-            getOptionLabel={option => option.name}
-            disablePortal
-            renderInput={params => <TextField {...params} label="Categories" margin="normal" />}
-          />
-
-          <Autocomplete
-            id="disable-portal"
-            onChange={this.subCategoriesIdIdHandler.bind(this)}
-
-            options={this.state.subCategories}
-            getOptionLabel={option => option.name}
-            disablePortal
-            renderInput={params => <TextField {...params} label="Sub Categories" margin="normal" />}
-          />
-
-          <Autocomplete
-            id="disable-portal"
-            onChange={this.topicesIdHandler.bind(this)}
-            options={this.state.topies}
     
-            getOptionLabel={option => option.name}
-            disablePortal
-            renderInput={params => <TextField {...params} label="Topics" margin="normal" />}
-          />
+    return <>
+      <Container component="main" maxWidth="md" style={{ padding: '40px' }}>
+        <Card className={classes.root} style={{ paddingLeft: "25%", paddingRight: '25%', paddingBottom: "10%" }}>
+          <Typography style={{ fontSize: 16, fontWeight: 'bold', marginTop: '4%', textAlign: 'center' }}>
+            <h3>Categories</h3>
+          </Typography>
 
-          <Grid container spacing={12}>
-            <Grid item xs={12}>
-            <Typography style={{ fontSize: 16, fontWeight: 'bold', marginTop: '4%' }}>
-          <h6>start Date</h6>
-        </Typography>
-              <TextField
-                // label='start Date'
-                type="datetime-local" id="start"
-                name="startDate"
-                value={this.state.startDate}
-                min="2018-01-01T00:00:00.000Z"
-                max="2018-12-31T00:00:00.000Z"
-                variant="outlined"
-                margin="normal"
-                onChange={(e) => this.handleChange(e)}
-                style={{width:'100%'}}
-              />
+          <form className={classes.form} noValidate onSubmit={this.handleSubmit.bind(this)}>
+
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Name"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              value={this.state.name}
+              onChange={(e) => this.handleChange(e)}
+            />
+
+            <div style={{ color: "red" }}>{this.state.errors.name}</div>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="imageUrl"
+              label="ImageUrl"
+              type="imageUrl"
+              id="imageUrl"
+              autoComplete="current-password"
+              value={this.state.imageUrl}
+              onChange={(e) => this.handleChange(e)}
+
+
+            />
+
+            <Autocomplete
+              id="disable-portal"
+
+              onChange={this.listOfCategoiresIdHandler.bind(this)}
+              options={this.state.listOfCategoires}
+              getOptionLabel={option => option.name}
+              disablePortal
+              renderInput={params => <TextField {...params} label="Categories" margin="normal" />}
+            />
+            <div style={{ color: "red" }}>{this.state.errors.listOfCategoires}</div>
+            <Autocomplete
+              id="disable-portal"
+              onChange={this.subCategoriesIdIdHandler.bind(this)}
+
+              options={this.state.subCategories}
+              getOptionLabel={option => option.name}
+              disablePortal
+              renderInput={params => <TextField {...params} label="Sub Categories" margin="normal" />}
+            />
+            <div style={{ color: "red" }}>{this.state.errors.subCategories}</div>
+            <Autocomplete
+              id="disable-portal"
+              onChange={this.topicesIdHandler.bind(this)}
+              options={this.state.topies}
+
+              getOptionLabel={option => option.name}
+              disablePortal
+              renderInput={params => <TextField {...params} label="Topics" margin="normal" />}
+            />
+            <div style={{ color: "red" }}>{this.state.errors.topies}</div>
+            <Grid container spacing={12}>
+              <Grid item xs={12}>
+                <Typography style={{ fontSize: 16, fontWeight: 'bold', marginTop: '4%' }}>
+                  <h6>start Date</h6>
+                </Typography>
+                <TextField
+                  // label='start Date'
+                  type="datetime-local" id="start"
+                  name="startDate"
+                  value={this.state.startDate}
+                  min="2018-01-01T00:00:00.000Z"
+                  max="2018-12-31T00:00:00.000Z"
+                  variant="outlined"
+                  margin="normal"
+                  onChange={(e) => this.handleChange(e)}
+                  style={{ width: '100%' }}
+                />
+              </Grid>
+
+
+              <Grid item xs={12}>
+                <Typography style={{ fontSize: 16, fontWeight: 'bold', marginTop: '4%' }}>
+                  <h6>End Date</h6>
+                </Typography>
+                <TextField
+                  // label='End Date'
+                  type="datetime-local"
+                  id="start"
+                  name="endDate"
+                  value={this.state.endDate}
+                  min="2018-01-01T00:00:00.000Z"
+                  max="2018-12-31T00:00:00.000Z"
+                  variant="outlined"
+                  margin="normal"
+                  style={{ width: '100%' }}
+                  onChange={(e) => this.handleChange(e)}
+                />
+              </Grid>
             </Grid>
-
-
-            <Grid item xs={12}>
-            <Typography style={{ fontSize: 16, fontWeight: 'bold', marginTop: '4%' }}>
-          <h6>End Date</h6>
-        </Typography>
-              <TextField
-                // label='End Date'
-                type="datetime-local"
-                id="start"
-                name="endDate"
-                value={this.state.endDate}
-                min="2018-01-01T00:00:00.000Z"
-                max="2018-12-31T00:00:00.000Z"
-                variant="outlined"
-                margin="normal"
-                style={{width:'100%'}}
-                onChange={(e) => this.handleChange(e)}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            justifyContent='center'
-            color="primary"
-            onClick={this.handleClickOpen}
-            className={classes.submit}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              justifyContent='center'
+              color="primary"
+              onClick={this.handleClickOpen}
+              className={classes.submit}
+              disabled={!isEnabled}
             >
-            Submit
+              Submit
         </Button>
-        <Dialog onClose={this.handleClose} aria-labelledby="customized-dialog-title"  open={this.state.open}>
-          <DialogContentText id="alert-dialog-slide-description"  onClose={this.handleClose} >
-            <h4 style={{padding:'3%'}}>succesfully Submit</h4>
-          </DialogContentText>
-          <DialogActions>
-          <Button onClick={this.handleClose} color="primary">
-            close
+            <Dialog onClose={this.handleClose} aria-labelledby="customized-dialog-title" open={this.state.open}>
+              <DialogContentText id="alert-dialog-slide-description" onClose={this.handleClose} >
+                <h5 style={{ padding: '3%' }}>succesfully Submit</h5>
+              </DialogContentText>
+              <DialogActions>
+                <Button onClick={this.handleClose} color="primary">
+                  close
           </Button>
-         
-        </DialogActions>
-      </Dialog>
 
-        </form>
+              </DialogActions>
+            </Dialog>
+
+          </form>
         </Card>
       </Container>
     </>
