@@ -4,17 +4,10 @@ import { Container, Grid ,Card} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Axios from 'axios';
-import Select from 'react-select';
 import { withStyles } from "@material-ui/core/styles";
-// import {FormControl,TextField} from '@material-ui/core'
-// import { FormControl, Input, MenuItem } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-// import { Container } from './styles';
-
-
 import Dialog from '@material-ui/core/Dialog';
 import { DialogActions, DialogContentText } from '@material-ui/core';
 
@@ -131,8 +124,18 @@ class Categories extends Component {
   }})
       .then(res => {
         console.log(res, "submitdata")
+
+        // if(res.data.success === true){
+        //   window.location.href = "/";
+        // }
+        // else{
+        //   window.location.href = "/category";
+        // }
       })
-      // window.location.reload();
+      
+      
+
+
   }
   
  handleClickOpen = () => {
@@ -141,11 +144,12 @@ class Categories extends Component {
 
   handleClose = () => {
     this.setState({open:false});
+    window.location.reload();
   };
 
   render() {
-    const { sDate } = this.state;
-    console.log(this.state, "------------------------")
+    // const { sDate } = this.state;
+    // console.log(this.state, "------------------------")
     const { classes } = this.props;
     return <>
       <Container component="main" maxWidth="md" style={{padding:'40px'}}>
@@ -266,8 +270,8 @@ class Categories extends Component {
             Submit
         </Button>
         <Dialog onClose={this.handleClose} aria-labelledby="customized-dialog-title"  open={this.state.open}>
-          <DialogContentText id="alert-dialog-slide-description" style={{padding:'3%'}} onClose={this.handleClose} >
-            <h3>succesfully Submit</h3>
+          <DialogContentText id="alert-dialog-slide-description"  onClose={this.handleClose} >
+            <h4 style={{padding:'3%'}}>succesfully Submit</h4>
           </DialogContentText>
           <DialogActions>
           <Button onClick={this.handleClose} color="primary">
